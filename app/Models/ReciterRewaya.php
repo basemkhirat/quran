@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Reciters extends Model
+class ReciterRewaya extends Model
 {
-    protected $table ='audio_reciters';
+    protected $table ='audio_reciters_rewayat';
     protected $primaryKey = 'id';
     protected $guarded = ['id'];
 
@@ -18,4 +18,9 @@ class Reciters extends Model
     {
        return $this->hasMany(Tracks::class,'audio_reciters_id','id');
     }
+
+    public function translation() {
+        return $this->hasOne(ReciterRewayaTranslation::class, "rewaya_id", "rewaya_id");
+    }
+
 }

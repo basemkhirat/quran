@@ -41,7 +41,7 @@ class AuthController extends Controller
         $user = new User();
 
         $user->username = rand(99999, 99999999);
-        $user->password = app('hash')->make($request->get("password"));;
+        $user->password = app('hash')->make($request->get("password"));
         $user->email = $request->get("email");
         $user->first_name = $request->get("first_name");
         $user->last_name = $request->get("last_name");
@@ -204,7 +204,7 @@ class AuthController extends Controller
         }
 
         $user->code = "";
-        $user->password = bcrypt(request()->get("password"));
+        $user->password = app('hash')->make(request()->get("password"));
         $user->updated_at = date("Y-m-d H:i:s");
         $user->save();
 

@@ -19,7 +19,7 @@ class RecitersResources extends JsonResource
             'caption' => [
                 'ar' => $this->name_ar,
                 'en' => $this->name_en,
-                'ur' => $this->name_en
+                'ur' => $this->name_ar
             ],
             'img' => null,
             'src_base_url' => $this->getBaseSrc($this->tracks->first()->url),

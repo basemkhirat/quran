@@ -31,20 +31,33 @@ Route::group(['prefix' => 'v1/'], function ($route) {    // Authentication
     Route::get('auth/user', ['uses' => 'AuthController@user', 'middleware' => "auth:api"]);
     Route::post('auth/profile', ['uses' => 'AuthController@profile', 'middleware' => "auth:api"]);
 
+    // Reciters
 
-    //reciters
     Route::get('reciters', [
         'as' => 'reciters',
-        'uses' => 'ApiController@getReciters'
+        'uses' => 'RecitersController@find'
     ]);
 
-    //track
+    Route::post('reciters/{reciter_id}/favorite', [
+        'as' => 'reciters',
+        'uses' => 'RecitersController@favorite',
+        'middleware' => "auth:api"
+    ]);
+
+    Route::get('rewayat', [
+        'as' => 'rewayat',
+        'uses' => 'RewayatController@find'
+    ]);
+
+    // Track
+
     Route::get('track', [
         'as' => 'track',
         'uses' => 'ApiController@getTrack'
     ]);
 
-    //timing
+    // Timing
+    
     Route::get('timing', [
         'as' => 'timing',
         'uses' => 'ApiController@getAudioTiming'
