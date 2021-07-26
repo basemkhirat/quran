@@ -16,9 +16,7 @@ class RewayatController extends Controller
         $query->join("rewaya_trans_name", "rewaya.rewaya_id", "=", "rewaya_trans_name.rewaya_id");
         $query->where("rewaya_trans_name.languages_id", config("main.locales." . app()->getLocale() . ".id"));
         $query->orderBy("rewaya.order", "asc");
-
-        $rewayat = $query->get();
         
-        return $rewayat;
+        return response()->success($query->get());
     }
 }

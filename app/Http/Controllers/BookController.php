@@ -52,7 +52,7 @@ class BookController extends Controller
             });
         }
 
-        return response()->json($query->get());
+        return response()->success($query->get());
     }
 
 
@@ -91,7 +91,7 @@ class BookController extends Controller
                 ];
             });
 
-        return response()->json($data);
+        return response()->success($data);
     }
 
     public function getFootnotes($text, $book_id)
@@ -129,7 +129,7 @@ class BookController extends Controller
             ]);
         }
 
-        return response()->json([
+        return response()->success([
             "is_favorited" => !$is_favorited
         ]);
     }
@@ -176,7 +176,7 @@ class BookController extends Controller
             //
         }
 
-        return response()->json(true);
+        return response()->success(true);
     }
 
     /**

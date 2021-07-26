@@ -101,6 +101,21 @@ Route::group(['prefix' => 'v1/'], function ($route) {    // Authentication
 
     Route::get('search', 'BookController@search');
     Route::post('pdf-request', 'ApiController@printRequest');
+
+    // Posts
+
+    $route->get('posts', 'PostsController@index');
+    $route->get('posts/sections', 'PostsController@sections');
+    $route->get('posts/sections/{id}', 'PostsController@section');
+    $route->get('posts/tags/{id}', 'PostsController@tag');
+    $route->get('posts/{id}', 'PostsController@details');
+    $route->put('posts/{id}/view', 'PostsController@view');
+
+    // Pages
+
+    $route->get('pages/{slug}', 'PagesController@details');
+    $route->post('messages/send', 'PagesController@contact');
+
 });
 
 // Route::get('load-font/{font}', function ($font) {

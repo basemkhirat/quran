@@ -26,7 +26,7 @@ class TracksController extends Controller
             });
         }
 
-        return response()->json($query->get());
+        return response()->success($query->get());
     }
 
     public function favorite($track_id)
@@ -47,7 +47,7 @@ class TracksController extends Controller
             ]);
         }
 
-        return response()->json([
+        return response()->success([
             "is_favorited" => !$is_favorited
         ]);
     }

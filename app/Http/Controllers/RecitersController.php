@@ -53,7 +53,7 @@ class RecitersController extends Controller
                 ->where("rewaya_trans_name.languages_id", config("main.locales." . app()->getLocale() . ".id"));
         }]);
 
-        return response()->json($query->get());
+        return response()->success($query->get());
     }
 
 
@@ -75,7 +75,7 @@ class RecitersController extends Controller
             ]);
         }
 
-        return response()->json([
+        return response()->success([
             "is_favorited" => !$is_favorited
         ]);
     }
