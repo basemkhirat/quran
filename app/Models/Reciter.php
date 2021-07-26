@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ReciterRewaya;
+use App\Models\ReciterIndex;
 use Illuminate\Support\Facades\DB;
 
 class Reciter extends Model
@@ -17,9 +17,18 @@ class Reciter extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      * get tracks
      */
-    public function rewayat()
+    public function indexes()
     {
-        return $this->hasMany(ReciterRewaya::class, 'reciter_id', 'id');
+        return $this->hasMany(ReciterIndex::class, 'reciter_id', 'id');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * get favorites
+     */
+    public function favorites()
+    {
+        return $this->hasMany(ReciterFavorite::class, 'reciter_id', 'id');
     }
 
     public function getIsFavoritedAttribute()

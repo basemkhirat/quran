@@ -10,12 +10,17 @@
         "flipbox/lumen-generator": "^8.2",
         "illuminate/mail": "^8.35",
         "illuminate/notifications": "^8.25",
-        "tymon/jwt-auth": "dev-develop"
+        "tymon/jwt-auth": "dev-develop",
+        "geoip2/geoip2": "^2.11",
+        "pragmarx/countries": "^0.7.2"
     },
     "autoload": {
         "psr-4": {
             "App\\": "app/"
-        }
+        },
+        "files": [
+            "app/helpers.php"
+        ]
     },
     "autoload-dev": {
         "classmap": [

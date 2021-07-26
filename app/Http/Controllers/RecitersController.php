@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Reciter;
+use App\Models\ReciterIndex;
+use App\Models\Track;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,20 +12,50 @@ use Illuminate\Support\Facades\DB;
 class RecitersController extends Controller
 {
 
-    public function find(Request $request)
+    public function find()
     {
+        $order = request()->filled("order") ? request()->get("order") : "alphabetic";
+        $rewaya_id = request()->filled("rewaya_id") ? request()->get("rewaya_id") : 10;
         $query = Reciter::select("id", "name_" . app()->getLocale() . " as name");
 
-        $query->with(["rewayat" => function ($q) {
-            $q->select("audio_reciters_rewayat.id", "audio_reciters_rewayat.reciter_id",  "audio_reciters_rewayat.index_url", "audio_reciters_rewayat.index_listing", "rewaya_trans_name.translation as name")->orderBy("audio_reciters_rewayat.rewaya_id", "desc")
-                ->join("rewaya_trans_name", "rewaya_trans_name.rewaya_id", "=", "audio_reciters_rewayat.rewaya_id")
+        switch ($order) {
+            case "alphabetic":
+                $query->orderBy("name_" . app()->getLocale(), "asc");
+                break;
+            case "favorites":
+                $query->withCount('favorites')->orderBy("favorites_count", "desc");
+                break;
+            case "listeners":
+                $query->orderBy("listeners", "desc");
+                break;
+            case "popular":
+                $query->orderBy("featured", "desc");
+                break;
+        }
+
+        if (request()->filled("is_favorited")) {
+            $query->whereHas("favorites", function ($query) {
+                $query->where("user_id", auth("api")->user()->id);
+            });
+        }
+
+        $query->whereHas("indexes", function ($query) use ($rewaya_id) {
+            $query->where("rewaya_id", $rewaya_id);
+
+            if (request()->filled("has_full_mushaf")) {
+                $query->where("has_full_mushaf", 1);
+            }
+        });
+
+        $query->with(["indexes" => function ($q) {
+            $q->select("audio_reciters_indexes.id", "audio_reciters_indexes.reciter_id",  "audio_reciters_indexes.rewaya_id",  "audio_reciters_indexes.index_url", "audio_reciters_indexes.index_listing", "rewaya_trans_name.translation as name")->orderBy("audio_reciters_indexes.rewaya_id", "desc")
+                ->join("rewaya_trans_name", "rewaya_trans_name.rewaya_id", "=", "audio_reciters_indexes.rewaya_id")
                 ->where("rewaya_trans_name.languages_id", config("main.locales." . app()->getLocale() . ".id"));
         }]);
 
-        $query->orderBy("order", "asc");
-
         return response()->json($query->get());
     }
+
 
     public function favorite($reciter_id)
     {

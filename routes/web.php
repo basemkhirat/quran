@@ -19,9 +19,9 @@ Route::get('/', function () use ($router) {
 });
 
 Route::group(['prefix' => 'v1/'], function ($route) {    // Authentication
-    
+
     // Authentication
-    
+
     Route::post('auth/login', 'AuthController@login');
     Route::post('auth/facebook', 'AuthController@facebook');
     Route::post('auth/google', 'AuthController@google');
@@ -39,9 +39,19 @@ Route::group(['prefix' => 'v1/'], function ($route) {    // Authentication
     ]);
 
     Route::post('reciters/{reciter_id}/favorite', [
-        'as' => 'reciters',
+        'as' => 'reciter_favorite',
         'uses' => 'RecitersController@favorite',
         'middleware' => "auth:api"
+    ]);
+
+    Route::get('tracks', [
+        'as' => 'tracks',
+        'uses' => 'TracksController@find'
+    ]);
+
+    Route::post('tracks/{track_id}/favorite', [
+        'as' => 'tracks_favorite',
+        'uses' => 'TracksController@favorite'
     ]);
 
     Route::get('rewayat', [
@@ -57,46 +67,17 @@ Route::group(['prefix' => 'v1/'], function ($route) {    // Authentication
     ]);
 
     // Timing
-    
+
     Route::get('timing', [
         'as' => 'timing',
         'uses' => 'ApiController@getAudioTiming'
     ]);
-    //tafasir
-    Route::get('tafasir', [
-        'as' => 'api_tafasir',
-        'uses' => 'ApiController@getTafasir'
-    ]);
 
-//  {key1}/{surah_number}/{aya_number}
-    Route::get('tafsir/{key}/{sura_number}/{aya_number}', [
-        'as' => 'api_tafsir',
-        'uses' => 'ApiController@getTafsir'
-    ]);
-    //  {key1}/{surah_number}/{aya_number}
-    Route::get('trans/{key}/{sura_number}/{aya_number}', [
-        'as' => 'api_trans',
-        'uses' => 'ApiController@getTrans'
-    ]);
-
-//  {page_tafsir}/{key1,key2}/{sura_number}
-    Route::get('page_tafsir/{keys}/{page_number}', [
-        'as' => 'page_tafsir',
-        'uses' => 'ApiController@getPageTafsir'
-    ]);
-//  {page_trans}/{key1,key2}/{sura_number}
-    Route::get('page_trans/{keys}/{page_number}', [
-        'as' => 'page_trans',
-        'uses' => 'ApiController@getPageTranses'
-    ]);
-
-//  /{page_number}
     Route::get('ayat/{page_number}', [
         'as' => 'api_aya',
         'uses' => 'ApiController@getAyat'
     ]);
 
-//  /{page_number}
     Route::get('ayat2/{page_number}', [
         'as' => 'api_ayat2',
         'uses' => 'ApiController@getAyat2'
@@ -105,13 +86,19 @@ Route::group(['prefix' => 'v1/'], function ($route) {    // Authentication
         'as' => 'transes',
         'uses' => 'ApiController@gettranses'
     ]);
-    Route::get('qurantext',[
+    Route::get('qurantext', [
         'as' => 'quran-text',
         'uses' => 'ApiController@getQuranText'
     ]);
     Route::get('singleTrack', 'ApiController@getTrack');
-    Route::get('books', 'BookController@index');
+    Route::get('books', 'BookController@find');
+    Route::post('books/{book_id}/favorite', [
+        'as' => 'books_favorite',
+        'uses' => 'BookController@favorite'
+    ]);
     Route::get('book-contents', 'BookController@booksContentByPage');
+    Route::post('book-contents/{content_id}/report', 'BookController@reportContent');
+
     Route::get('search', 'BookController@search');
     Route::post('pdf-request', 'ApiController@printRequest');
 });
