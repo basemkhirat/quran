@@ -87,10 +87,13 @@ class QuranController extends Controller
             ->count();
 
         if ($is_commented) {
-            DB::table("ayah_comments")
+            // update comment
+            DB::table("ayah_comments")->where("user_id", auth("api")->user()->id)
                 ->where("sura", $sura)
                 ->where("aya", $aya)
-                ->where("user_id", auth("api")->user()->id)->delete();
+                ->update([
+                    "title" => $title
+                ]);
         } else {
             DB::table("ayah_comments")->insert([
                 "user_id" => auth("api")->user()->id,
@@ -104,8 +107,16 @@ class QuranController extends Controller
             ]);
         }
 
-        return response()->success([
-            "is_commented" => !$is_commented
-        ]);
+        return response()->success(true);
+    }
+
+    public function removeComment($sura, $aya)
+    {
+        DB::table("ayah_comments")->where("user_id", auth("api")->user()->id)
+            ->where("sura", $sura)
+            ->where("aya", $aya)
+            ->delete();
+
+        return response()->success(true);
     }
 }

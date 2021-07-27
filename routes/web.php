@@ -134,6 +134,12 @@ Route::group(['prefix' => 'v1/'], function ($route) {    // Authentication
         'uses' => 'QuranController@comment'
     ]);
 
+
+    Route::delete('quran/{sura}/{aya}/comment', [
+        'as' => 'ayah_remove_comment',
+        'uses' => 'QuranController@removeComment'
+    ]);
+
 });
 
 // Route::get('load-font/{font}', function ($font) {
