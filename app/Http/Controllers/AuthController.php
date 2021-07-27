@@ -53,6 +53,17 @@ class AuthController extends Controller
 
         if ($user->save()) {
 
+            // create default settings
+
+            $user_settings = new UserSetting();
+            $user_settings->user_id = auth("api")->user()->id;
+            $user_settings->page_id = 0;
+            $user_settings->rewaya_id = 10;
+            $user_settings->reciter_id = 1;
+            $user_settings->locale = "ar";
+            $user_settings->color = "grey";
+            $user_settings->save();
+
             try {
                 Mail::send('emails.welcome', ['user' => $user], function ($m) use ($user) {
                     $m->from(config("mail.from.address"),  trans("main.name"));
@@ -119,7 +130,7 @@ class AuthController extends Controller
         $logged_user = auth("api")->user();
 
         $user = User::where("users.id", $logged_user->id)
-            ->select("users.*", "user_settings.page_id", "user_settings.color")
+            ->select("users.*", "user_settings.page_id", "user_settings.color", "user_settings.reciter_id", "user_settings.rewaya_id")
             ->leftJoin("user_settings", "users.id", "=", "user_settings.user_id")->first();
 
         return response()->success($user);
@@ -384,6 +395,9 @@ class AuthController extends Controller
             $user_settings = new UserSetting();
             $user_settings->user_id = auth("api")->user()->id;
             $user_settings->page_id = 0;
+            $user_settings->rewaya_id = 10;
+            $user_settings->reciter_id = 1;
+            $user_settings->locale = "ar";
             $user_settings->color = "grey";
         }
 
@@ -393,6 +407,18 @@ class AuthController extends Controller
 
         if (request()->filled("color")) {
             $user_settings->color = request("color");
+        }
+
+        if (request()->filled("locale")) {
+            $user_settings->locale = request("locale");
+        }
+
+        if (request()->filled("reciter_id")) {
+            $user_settings->reciter_id = request("reciter_id");
+        }
+
+        if (request()->filled("rewaya_id")) {
+            $user_settings->rewaya_id = request("rewaya_id");
         }
 
         $user_settings->save();
