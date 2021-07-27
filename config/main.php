@@ -12,5 +12,8 @@ return [
             'title' => 'English',
             'is_rtl' => false
         ]
-    ]
+    ],
+
+    'moshaf_id' =>  9,  
+    'rewaya_id' =>  10, // hafs
 ];

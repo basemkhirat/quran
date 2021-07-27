@@ -12,7 +12,8 @@
         "illuminate/notifications": "^8.25",
         "tymon/jwt-auth": "dev-develop",
         "geoip2/geoip2": "^2.11",
-        "pragmarx/countries": "^0.7.2"
+        "pragmarx/countries": "^0.7.2",
+        "basemkhirat/elasticsearch": "dev-2X"
     },
     "autoload": {
         "psr-4": {

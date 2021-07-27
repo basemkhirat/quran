@@ -116,6 +116,23 @@ Route::group(['prefix' => 'v1/'], function ($route) {    // Authentication
     $route->get('pages/{slug}', 'PagesController@details');
     $route->post('messages/send', 'PagesController@contact');
 
+    // Quran
+
+    Route::get('quran', [
+        'as' => 'ayat',
+        'uses' => 'QuranController@find'
+    ]);
+
+    Route::post('quran/{sura}/{aya}/favorite', [
+        'as' => 'ayah_favorite',
+        'uses' => 'QuranController@favorite'
+    ]);
+
+    Route::post('quran/{sura}/{aya}/comment', [
+        'as' => 'ayah_comment',
+        'uses' => 'QuranController@comment'
+    ]);
+
 });
 
 // Route::get('load-font/{font}', function ($font) {

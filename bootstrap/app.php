@@ -62,6 +62,8 @@ $app->singleton(
 
 $app->configure('mail');
 $app->configure('main');
+$app->configure('es');
+
 // $app->alias('mailer', Illuminate\Mail\Mailer::class);
 // $app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
 // $app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
@@ -102,6 +104,7 @@ $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(App\Providers\AppServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Illuminate\Mail\MailServiceProvider::class);
+$app->register(Basemkhirat\Elasticsearch\ElasticsearchServiceProvider::class);
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
