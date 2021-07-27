@@ -29,6 +29,7 @@ Route::group(['prefix' => 'v1/'], function ($route) {    // Authentication
     Route::post('auth/forgot', 'AuthController@forgot');
     Route::post('auth/reset', 'AuthController@reset');
     Route::get('auth/user', ['uses' => 'AuthController@user', 'middleware' => "auth:api"]);
+    Route::post('auth/settings', ['uses' => 'AuthController@settings', 'middleware' => "auth:api"]);
     Route::post('auth/profile', ['uses' => 'AuthController@profile', 'middleware' => "auth:api"]);
 
     // Reciters

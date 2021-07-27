@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Models\Report;
+use App\Models\UserSetting;
 use Illuminate\Support\Facades\Mail;
 
 class QuranController extends Controller

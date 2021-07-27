@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Models\UserSetting;
 
 class AuthController extends Controller
 {
@@ -115,7 +116,12 @@ class AuthController extends Controller
 
     public function user()
     {
-        $user = auth("api")->user();
+        $logged_user = auth("api")->user();
+
+        $user = User::where("users.id", $logged_user->id)
+            ->select("users.*", "user_settings.page_id", "user_settings.color")
+            ->leftJoin("user_settings", "users.id", "=", "user_settings.user_id")->first();
+
         return response()->success($user);
     }
 
@@ -367,5 +373,30 @@ class AuthController extends Controller
         $token = auth("api")->tokenById($user->id);
 
         return $this->respondWithToken($token);
+    }
+
+
+    public function settings()
+    {
+        $user_settings = UserSetting::where("user_id", auth("api")->user()->id)->first();
+
+        if (!$user_settings) {
+            $user_settings = new UserSetting();
+            $user_settings->user_id = auth("api")->user()->id;
+            $user_settings->page_id = 0;
+            $user_settings->color = "grey";
+        }
+
+        if (request()->filled("page_id")) {
+            $user_settings->page_id = request("page_id");
+        }
+
+        if (request()->filled("color")) {
+            $user_settings->color = request("color");
+        }
+
+        $user_settings->save();
+
+        return response()->success("saved");
     }
 }
