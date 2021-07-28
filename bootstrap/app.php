@@ -79,9 +79,15 @@ $app->configure('es');
 |
 */
 
+// $app->middleware([
+//     App\Http\Middleware\CorsMiddleware::class
+// ]);
+
 $app->middleware([
-   App\Http\Middleware\LocaleMiddleware::class
+    App\Http\Middleware\LocaleMiddleware::class
 ]);
+
+
 
 // $app->routeMiddleware([
 //     'auth' => App\Http\Middleware\Authenticate::class,

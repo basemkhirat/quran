@@ -28,8 +28,7 @@ class AuthController extends Controller
                 }),
             ],
             'password' => 'required|min:6',
-            'first_name' => 'required',
-            'last_name' => 'required'
+            'first_name' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -130,7 +129,15 @@ class AuthController extends Controller
         $logged_user = auth("api")->user();
 
         $user = User::where("users.id", $logged_user->id)
-            ->select("users.*", "user_settings.page_id", "user_settings.color", "user_settings.reciter_id", "user_settings.rewaya_id")
+            ->select(
+                "users.*",
+                "user_settings.page_id",
+                "user_settings.color",
+                "user_settings.reciter_id",
+                "user_settings.rewaya_id",
+                "user_settings.tashkeel",
+                "user_settings.locale"
+            )
             ->leftJoin("user_settings", "users.id", "=", "user_settings.user_id")->first();
 
         return response()->success($user);
@@ -174,8 +181,8 @@ class AuthController extends Controller
                 $m->from(config("mail.from.address"),  trans("main.name"));
                 $m->to($user->email, $user->first_name)->subject(trans("main.forgot_my_password"));
             });
-        } catch (Exception $e) {
-            //
+        } catch (\Exception $e) {
+            return response()->error($e);
         }
 
         return response()->success(trans("main.verification_code_sent"));
@@ -253,10 +260,7 @@ class AuthController extends Controller
                 })
             ],
             'password' => 'min:6',
-            'first_name' => 'required|min:3',
-            'last_name' => 'required|min:3',
-            'lang' => 'in:ar,en',
-            'mode' => 'in:light,dark'
+            'first_name' => 'required|min:3'
         ]);
 
         if ($validator->fails()) {
@@ -267,32 +271,12 @@ class AuthController extends Controller
             $user->first_name = request()->get("first_name");
         }
 
-        if (request()->filled("last_name")) {
-            $user->last_name = request()->get("last_name");
-        }
-
         if (request()->filled("email")) {
             $user->email = request()->get("email");
         }
 
-        if (request()->filled("mode")) {
-            $user->mode = request()->get("mode");
-        }
-
-        if (request()->filled("lang")) {
-            $user->lang = request()->get("lang");
-        }
-
-        if (request()->filled("tashkeel")) {
-            $user->tashkeel = request()->get("tashkeel");
-        }
-
-        if (request()->filled("phone")) {
-            $user->phone = request()->get("phone");
-        }
-
         if (request()->get("password") != "") {
-            $user->password = bcrypt(request()->get("password"));
+            $user->password = app('hash')->make(request()->get("password"));
         }
 
         $user->save();
@@ -399,6 +383,7 @@ class AuthController extends Controller
             $user_settings->reciter_id = 1;
             $user_settings->locale = "ar";
             $user_settings->color = "grey";
+            $user_settings->tashkeel = 1;
         }
 
         if (request()->filled("page_id")) {
@@ -419,6 +404,10 @@ class AuthController extends Controller
 
         if (request()->filled("rewaya_id")) {
             $user_settings->rewaya_id = request("rewaya_id");
+        }
+
+        if (request()->filled("tashkeel")) {
+            $user_settings->tashkeel = request()->get("tashkeel");
         }
 
         $user_settings->save();
