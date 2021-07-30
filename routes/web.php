@@ -11,14 +11,29 @@
 |
 */
 
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
+use App\Models\Ayah;
+use Illuminate\Support\Facades\DB;
 
-Route::get('/', function () use ($router) {
-    return 'Main home page';
-});
+Route::group(['prefix' => 'v1/'], function ($route) {
 
-Route::group(['prefix' => 'v1/'], function ($route) {    // Authentication
+    // $route->get("/", function () {
+    //     $rows = Ayah::get();
+
+    //     foreach ($rows as $row) {
+
+    //         $data = DB::table("ayat")->where("surat_id", $row->surah_id)
+    //             ->where("numberinsurat", $row->ayah_number)
+    //             ->first();
+
+    //         $row->part = $data->juz_id;
+    //         $row->hizb = ceil($data->hizbQuarter_id * 60 / 240);
+
+    //         $row->save();
+    //     }
+
+    //     return "done";
+    // });
 
     // Authentication
 
@@ -139,7 +154,6 @@ Route::group(['prefix' => 'v1/'], function ($route) {    // Authentication
         'as' => 'ayah_remove_comment',
         'uses' => 'QuranController@removeComment'
     ]);
-
 });
 
 // Route::get('load-font/{font}', function ($font) {

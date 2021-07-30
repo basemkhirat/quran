@@ -39,6 +39,10 @@ class RecitersController extends Controller
             });
         }
 
+        if (request()->filled("is_featured")) {
+            $query->where("featured", 1);
+        }
+
         $query->whereHas("indexes", function ($query) use ($rewaya_id) {
             $query->where("rewaya_id", $rewaya_id);
 

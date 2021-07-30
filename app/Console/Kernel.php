@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Console\Commands\CopyAyaCleanText;
 use App\Console\Commands\CreateAya;
+use App\Console\Commands\JsonGenerateCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 
@@ -16,7 +17,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         CreateAya::class,
-        CopyAyaCleanText::class
+        CopyAyaCleanText::class,
+        JsonGenerateCommand::class
     ];
 
     /**

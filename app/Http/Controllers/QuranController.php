@@ -24,7 +24,9 @@ class QuranController extends Controller
             "ayah_id as id",
             "page_id as page",
             "surah_id as sura",
-            "ayah_number as aya"
+            "ayah_number as aya",
+            "part as juz",
+            "hizb as hizb",
         );
 
         if (request()->filled("is_favorited")) {

@@ -149,7 +149,6 @@ class AuthController extends Controller
      */
     public function forgot()
     {
-
         $validator = Validator::make(request()->all(), ['email' => 'required|email']);
 
         if ($validator->fails()) {
@@ -384,6 +383,7 @@ class AuthController extends Controller
             $user_settings->locale = "ar";
             $user_settings->color = "grey";
             $user_settings->tashkeel = 1;
+            $user_settings->pages_view = 1;
         }
 
         if (request()->filled("page_id")) {
@@ -408,6 +408,10 @@ class AuthController extends Controller
 
         if (request()->filled("tashkeel")) {
             $user_settings->tashkeel = request()->get("tashkeel");
+        }
+
+        if (request()->filled("pages_view")) {
+            $user_settings->tashkeel = request()->get("pages_view");
         }
 
         $user_settings->save();
