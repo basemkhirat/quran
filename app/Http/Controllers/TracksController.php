@@ -17,6 +17,7 @@ class TracksController extends Controller
         $query = Track::orderBy("surah_id", "asc");
 
         $query->select(
+            "audio_tracks.id",
             "audio_tracks.surah_id as sura_id",
             "url",
         );
