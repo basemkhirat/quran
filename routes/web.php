@@ -54,6 +54,11 @@ Route::group(['prefix' => 'v1/'], function ($route) {
         'uses' => 'RecitersController@find'
     ]);
 
+    Route::get('reciters/{reciter_id}', [
+        'as' => 'reciter_details',
+        'uses' => 'RecitersController@details'
+    ]);
+
     Route::post('reciters/{reciter_id}/favorite', [
         'as' => 'reciter_favorite',
         'uses' => 'RecitersController@favorite',
@@ -153,6 +158,11 @@ Route::group(['prefix' => 'v1/'], function ($route) {
     Route::delete('quran/{sura}/{aya}/comment', [
         'as' => 'ayah_remove_comment',
         'uses' => 'QuranController@removeComment'
+    ]);
+
+    Route::get('download', [
+        'as' => 'download',
+        'uses' => 'DownloadController@download'
     ]);
 });
 

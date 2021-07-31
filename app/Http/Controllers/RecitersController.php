@@ -60,6 +60,19 @@ class RecitersController extends Controller
         return response()->success($query->get());
     }
 
+    public function details($reciter_id) {
+   
+            $query = Reciter::where("id", $reciter_id)->select("id", "name_" . app()->getLocale() . " as name");
+    
+            $query->with(["indexes" => function ($q) {
+                $q->select("audio_reciters_indexes.id", "audio_reciters_indexes.reciter_id",  "audio_reciters_indexes.rewaya_id",  "audio_reciters_indexes.index_url", "audio_reciters_indexes.index_listing", "rewaya_trans_name.translation as name")->orderBy("audio_reciters_indexes.rewaya_id", "desc")
+                    ->join("rewaya_trans_name", "rewaya_trans_name.rewaya_id", "=", "audio_reciters_indexes.rewaya_id")
+                    ->where("rewaya_trans_name.languages_id", config("main.locales." . app()->getLocale() . ".id"));
+            }]);
+    
+            return response()->success($query->first());
+        
+    }
 
     public function favorite($reciter_id)
     {

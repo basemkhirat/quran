@@ -16,6 +16,21 @@ class TracksController extends Controller
     {
         $query = Track::orderBy("surah_id", "asc");
 
+        $query->select(
+            "audio_tracks.surah_id as sura_id",
+            "url",
+        );
+
+        $query->join("audio_reciters_indexes", "audio_reciters_indexes.id", "=", "audio_tracks.index_id");
+
+        if (request()->filled("reciter_id")) {
+            $query->where("audio_reciters_indexes.reciter_id", request()->get("reciter_id"));
+        }
+
+        if (request()->filled("rewaya_id")) {
+            $query->where("audio_reciters_indexes.rewaya_id", request()->get("rewaya_id"));
+        }
+
         if (request()->filled("index_id")) {
             $query->where("index_id", request()->get("index_id"));
         }
