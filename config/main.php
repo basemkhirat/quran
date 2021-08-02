@@ -14,6 +14,6 @@ return [
         ]
     ],
 
-    'moshaf_id' =>  9,  
+    'moshaf_id' =>  5,  
     'rewaya_id' =>  10, // hafs
 ];

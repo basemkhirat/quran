@@ -3,17 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Book;
 use App\Models\Faq;
 use App\Models\Message;
 use App\Models\Page;
-use App\Models\Request;
 use Illuminate\Support\Facades\Mail;
-use App\Models\UserBook;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
-use App\Models\Import;
-use App\Models\User;
 use Exception;
 
 class PagesController extends Controller
@@ -91,5 +84,40 @@ class PagesController extends Controller
         }
 
         return response()->success("sent");
+    }
+
+    /**
+     * Faq page
+     * @return mixed
+     */
+    public function faq()
+    {
+        $query = Faq::orderBy("order");
+
+        $questions = $query->get();
+
+        if (request()->get("with") == "translations") {
+
+            $rows = [];
+
+            foreach ($questions as $question) {
+
+                $translations = (object)[];
+
+                foreach (["ar", "en", "ur"] as $locale) {
+                    $translations->{$locale} = (object) [
+                        "title" => $question->{"title_" . $locale},
+                        "content" => $question->{"content_" . $locale}
+                    ];
+                }
+
+                $question->translations = $translations;
+                $rows[] = $question;
+            }
+
+            return response()->success($rows);
+        }
+
+        return response()->success($questions);
     }
 }

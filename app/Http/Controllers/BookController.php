@@ -24,7 +24,8 @@ class BookController extends Controller
     {
 
         $order = request()->filled("order") ? request()->get("order") : "alphabetic";
-        $query = Book::select('books_id as id', 'short_name as slug', 'arabic_title as title', 'pdf_url', 'books_type_id as type')->where('is_active', 1);
+        $query = Book::select('books_id as id', 'short_name as slug', 'arabic_title as title', 'description_ar as description', 'pdf_url', 'books_type_id as type')
+        ->where('is_active', 1);
 
         switch ($order) {
             case "alphabetic":

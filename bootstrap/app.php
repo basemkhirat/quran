@@ -79,9 +79,9 @@ $app->configure('es');
 |
 */
 
-// $app->middleware([
-//     App\Http\Middleware\CorsMiddleware::class
-// ]);
+$app->middleware([
+    App\Http\Middleware\CorsMiddleware::class
+]);
 
 $app->middleware([
     App\Http\Middleware\LocaleMiddleware::class

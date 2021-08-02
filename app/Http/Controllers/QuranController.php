@@ -18,7 +18,7 @@ class QuranController extends Controller
 
     public function find()
     {
-        $query = Ayah::where("page_id", request("page"))->where("rewaya_id", 0);
+        $query = Ayah::where("masahef_id", config("main.moshaf_id"));
 
         $query->select(
             "ayah_id as id",
@@ -28,6 +28,10 @@ class QuranController extends Controller
             "part as juz",
             "hizb as hizb",
         );
+
+        if (request()->filled("page")) {
+            $query->where("page_id", request("page"));
+        }
 
         if (request()->filled("is_favorited")) {
             $query->whereHas("favorites", function ($query) {
@@ -47,7 +51,8 @@ class QuranController extends Controller
     public function favorite($sura, $aya)
     {
 
-        $aya_row = Ayah::where("surah_id", $sura)->where("ayah_number", $aya)->first();
+        $aya_row = Ayah::where("masahef_id", config("main.moshaf_id"))->where("surah_id", $sura)
+            ->where("ayah_number", $aya)->first();
 
         $is_favorited = DB::table("ayah_favorites")
             ->where("sura", $sura)
@@ -59,7 +64,8 @@ class QuranController extends Controller
             DB::table("ayah_favorites")
                 ->where("sura", $sura)
                 ->where("aya", $aya)
-                ->where("user_id", auth("api")->user()->id)->delete();
+                ->where("user_id", auth("api")->user()->id)
+                ->delete();
         } else {
             DB::table("ayah_favorites")->insert([
                 "user_id" => auth("api")->user()->id,
@@ -77,10 +83,37 @@ class QuranController extends Controller
         ]);
     }
 
+    public function comments()
+    {
+        $query = DB::table("ayah_comments")->orderBy("created_at", "desc");
+
+        $query->where("ayah_comments.user_id", auth("api")->user()->id);
+        
+        $query->select(
+            "id",
+            "title",
+            "sura",
+            "aya",
+            "uthmani_text as text",
+            "part",
+            "hizb",
+            "page_id as page",
+            "created_at"
+        );
+
+        $query->join("ayah", function($query) {
+            $query->on("ayah_comments.sura", "=", "ayah.surah_id")
+            ->on("ayah_comments.aya", "=", "ayah.ayah_number")
+            ->where("ayah.masahef_id", config("main.moshaf_id"));
+        });
+
+        return response()->success($query->get());
+    }
+
     public function comment($sura, $aya)
     {
         $title = request("title");
-        $aya_row = Ayah::where("surah_id", $sura)->where("ayah_number", $aya)->first();
+        $aya_row = Ayah::where("masahef_id", config("main.moshaf_id"))->where("surah_id", $sura)->where("ayah_number", $aya)->first();
 
         $is_commented = DB::table("ayah_comments")
             ->where("sura", $sura)

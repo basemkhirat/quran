@@ -1,12 +1,5 @@
 <?php
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers:*");
-
-if ($_SERVER['REQUEST_METHOD'] == "OPTIONS") {//send back preflight request response
-    return "";
-}
-
 /*
 |--------------------------------------------------------------------------
 | Create The Application

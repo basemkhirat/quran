@@ -134,6 +134,7 @@ Route::group(['prefix' => 'v1/'], function ($route) {
 
     // Pages
 
+    $route->get('pages/faq', 'PagesController@faq');
     $route->get('pages/{slug}', 'PagesController@details');
     $route->post('messages/send', 'PagesController@contact');
 
@@ -142,6 +143,13 @@ Route::group(['prefix' => 'v1/'], function ($route) {
     Route::get('quran', [
         'as' => 'ayat',
         'uses' => 'QuranController@find'
+    ]);
+
+
+    Route::get('quran/comments', [
+        'as' => 'comments',
+        'uses' => 'QuranController@comments',
+        'middleware' => "auth:api"
     ]);
 
     Route::post('quran/{sura}/{aya}/favorite', [
@@ -153,7 +161,6 @@ Route::group(['prefix' => 'v1/'], function ($route) {
         'as' => 'ayah_comment',
         'uses' => 'QuranController@comment'
     ]);
-
 
     Route::delete('quran/{sura}/{aya}/comment', [
         'as' => 'ayah_remove_comment',
