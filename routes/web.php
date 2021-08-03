@@ -113,6 +113,7 @@ Route::group(['prefix' => 'v1/'], function ($route) {
     ]);
     Route::get('singleTrack', 'ApiController@getTrack');
     Route::get('books', 'BookController@find');
+    Route::get('books/{book_id}', 'BookController@details');
     Route::post('books/{book_id}/favorite', [
         'as' => 'books_favorite',
         'uses' => 'BookController@favorite'

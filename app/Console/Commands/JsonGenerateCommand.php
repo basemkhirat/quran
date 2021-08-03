@@ -29,22 +29,53 @@ class JsonGenerateCommand extends Command
      */
     public function handle()
     {
+        $this->info('Generating pos.json');
+
+        $ayat = DB::table("ayah")->where("masahef_id", config("main.moshaf_id"))
+            ->orderBy("ayah_id", "asc")
+            ->get();
+
+        $list = [];
+
+        $i = 1;
+        foreach ($ayat as $aya) {
+            $list[] = [
+                $aya->page_id,
+                $aya->surah_id,
+                $aya->ayah_number,
+                $i
+            ];
+            $i++;
+        }
+
+        file_put_contents(base_path('public/data/pos.json'), json_encode($list));
 
         $this->info('Generating page.json');
 
         $pages = [];
 
         for ($i = 1; $i <= 604; $i++) {
-           
+
+            $part = DB::table("ayah")->where("masahef_id", config("main.moshaf_id"))
+                ->where("page_id", $i)
+                ->orderBy("part", "desc")
+                ->first();
+
+            $hizb = DB::table("ayah")->where("masahef_id", config("main.moshaf_id"))
+                ->where("page_id", $i)
+                ->orderBy("hizb", "desc")
+                ->first();
+
             $page = DB::table("ayah")->where("masahef_id", config("main.moshaf_id"))
                 ->where("page_id", $i)
                 ->orderBy("ayah_number", "asc")
                 ->first();
-           
+
+        
             $pages[] = (object) [
                 "n" => $page->page_id,
-                "p" => $page->part,
-                "h" => $page->hizb,
+                "p" => $part->part,
+                "h" => $hizb->hizb,
                 "s" => $page->surah_id,
                 "a" => $page->ayah_number
             ];
@@ -59,9 +90,7 @@ class JsonGenerateCommand extends Command
         $ayat = [];
 
         foreach ($rows as $row) {
-            foreach ($row as $aya) {
                 $ayat[$row->surah_id . "-" . $row->ayah_number] = $row->uthmani_text;
-            }
         }
 
         file_put_contents(base_path('public/data/aya.json'), json_encode($ayat));

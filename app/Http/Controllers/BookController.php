@@ -25,7 +25,7 @@ class BookController extends Controller
 
         $order = request()->filled("order") ? request()->get("order") : "alphabetic";
         $query = Book::select('books_id as id', 'short_name as slug', 'arabic_title as title', 'description_ar as description', 'pdf_url', 'books_type_id as type')
-        ->where('is_active', 1);
+            ->where('is_active', 1);
 
         switch ($order) {
             case "alphabetic":
@@ -54,6 +54,14 @@ class BookController extends Controller
         }
 
         return response()->success($query->get());
+    }
+
+    public function details($book_id)
+    {
+        $query = Book::where("books_id", $book_id)
+            ->select('books_id as id', 'short_name as slug', 'arabic_title as title', 'description_ar as description', 'pdf_url', 'books_type_id as type')
+            ->where('is_active', 1);
+        return response()->success($query->first());
     }
 
 
@@ -163,7 +171,7 @@ class BookController extends Controller
         $report->wording_stars = request("wording_stars", 0);
         $report->linguist_stars = request("linguist_stars", 0);
         $report->country = getUserCountry();
-        
+
         $report->save();
 
         // Send a mail message
