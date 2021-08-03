@@ -27,10 +27,19 @@ class QuranController extends Controller
             "ayah_number as aya",
             "part as juz",
             "hizb as hizb",
+            "clean_text as text"
         );
 
         if (request()->filled("page")) {
             $query->where("page_id", request("page"));
+        }
+
+        if (request()->filled("q")) {
+            $query->where(function ($query) {
+                return $query->where("clean_text", "LIKE", "%" . request()->get("q") . "%")
+                    ->orWhere("search_text", "LIKE", "%" . request()->get("q") . "%")
+                    ->orWhere("uthmani_text", "LIKE", "%" . request()->get("q") . "%");
+            });
         }
 
         if (request()->filled("is_favorited")) {
@@ -88,7 +97,7 @@ class QuranController extends Controller
         $query = DB::table("ayah_comments")->orderBy("created_at", "desc");
 
         $query->where("ayah_comments.user_id", auth("api")->user()->id);
-        
+
         $query->select(
             "id",
             "title",
@@ -101,10 +110,10 @@ class QuranController extends Controller
             "created_at"
         );
 
-        $query->join("ayah", function($query) {
+        $query->join("ayah", function ($query) {
             $query->on("ayah_comments.sura", "=", "ayah.surah_id")
-            ->on("ayah_comments.aya", "=", "ayah.ayah_number")
-            ->where("ayah.masahef_id", config("main.moshaf_id"));
+                ->on("ayah_comments.aya", "=", "ayah.ayah_number")
+                ->where("ayah.masahef_id", config("main.moshaf_id"));
         });
 
         return response()->success($query->get());

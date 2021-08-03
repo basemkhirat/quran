@@ -39,6 +39,10 @@ class RecitersController extends Controller
             });
         }
 
+        if (request()->filled("q")) {
+            $query->where("name_". app()->getLocale(), "LIKE", "%" . request()->get("q") . "%");
+        }
+
         if (request()->filled("is_featured")) {
             $query->where("featured", 1);
         }
