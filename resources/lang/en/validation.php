@@ -191,7 +191,10 @@ return [
         "message" => "message",
         "category_id" => "category",
         "name_ar" => "Arabic name",
-        "stars" => "stars"
+        "stars" => "stars",
+        "linguist_stars" => "linguist stars",
+        "wording_stars" => "wording stars",
+        "legal_stars" => "legal stars"
     ],
 
 ];

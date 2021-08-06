@@ -119,7 +119,7 @@ Route::group(['prefix' => 'v1/'], function ($route) {
         'uses' => 'BookController@favorite'
     ]);
     Route::get('book-contents', 'BookController@booksContentByPage');
-    Route::post('book-contents/{content_id}/report', 'BookController@reportContent');
+    Route::post('book-contents/{book_id}/{sura}/{aya}/report', 'BookController@reportContent');
 
     Route::get('search', 'BookController@search');
     Route::post('pdf-request', 'ApiController@printRequest');

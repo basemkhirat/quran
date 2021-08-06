@@ -73,32 +73,48 @@ class BookController extends Controller
     {
         $bookIDs = explode(',', $request->books);
 
-        $meta = [];
 
-        $books = Book::select('books_id as id', 'short_name as slug', 'arabic_title as title', 'languages_id')->whereIn('books_id', $bookIDs)->get();
+        $books = Book::select('books_id as id', 'books_type_id as type', 'short_name as slug',  'arabic_title as title', 'languages_id')->whereIn('books_id', $bookIDs)->get();
 
         $data = [];
 
-        Ayah::select('surah_id as sura', 'ayah_number as aya')->where('page_id', $request->page)->where('masahef_id', 2)->get()
-            ->each(function ($q) use (&$data, $bookIDs, $books) {
+        if($request->page) {
+            $ayat = Ayah::select('ayah_id as id', 'uthmani_text as text', 'surah_id as sura', 'ayah_number as aya')
+            ->where('page_id', $request->page)
+            ->where('masahef_id', config("main.moshaf_id"))->get();
+        }else{
+            $ayat = Ayah::select('ayah_id as id', 'uthmani_text as text', 'surah_id as sura', 'ayah_number as aya')
+            ->where('surah_id', $request->sura)
+            ->where('ayah_number', $request->aya)
+            ->where('masahef_id', config("main.moshaf_id"))->get();
+        }
 
-                $records = BookContent::select('books_id as book_id', 'books_contents_id as page_id', 'revised_text as text')->whereIn('books_id', $bookIDs)->where('surah_id', $q->sura)->where('ayah_from_id', $q->aya)->get();
+        $ayat->each(function ($q) use (&$data, $bookIDs, $books) {
 
-                $records = $records->map(function ($record) use ($records, $books) {
-                    $book = $books->where("id", $record->book_id)->first();
-                    $text = $record->text;
-                    $record->book_title = $book->title;
-                    $record->footnotes =  $this->getFootnotes($text, $record->book_id);
-                    $record->direction = $book->languages_id == 4 ? "rtl" : "ltr";
-                    return $record;
-                });
+            $records = BookContent::select('books_id as id', 'books_contents_id as page_id', 'revised_text as text')
 
-                $data[] = (object) [
-                    "sura" => $q->sura,
-                    "aya" => $q->aya,
-                    "books" => $records
-                ];
+                ->whereIn('books_id', $bookIDs)
+                ->where('surah_id', $q->sura)
+                ->where('ayah_from_id', $q->aya)->get();
+
+            $records = $records->map(function ($record) use ($records, $books) {
+                $book = $books->where("id", $record->id)->first();
+                $text = $record->text;
+                $record->type = $book->type;
+                $record->title = $book->title;
+                $record->footnotes =  $this->getFootnotes($text, $record->id);
+                $record->direction = in_array($book->languages_id, [1, 2, 11, 35, 49]) ? "rtl" : "ltr";
+                return $record;
             });
+
+            $data[] = (object) [
+                "id" => $q->id,
+                "text" => $q->text,
+                "sura" => $q->sura,
+                "aya" => $q->aya,
+                "books" => $records
+            ];
+        });
 
         return response()->success($data);
     }
@@ -143,15 +159,15 @@ class BookController extends Controller
         ]);
     }
 
-    public function reportContent($content_id)
+    public function reportContent($book_id, $sura, $aya)
     {
         $validator = validator()->make(request()->all(), [
             "name" => "required",
             "email" => "required|email",
             'message' => 'required|max:500',
-            'wording_stars' => 'required',
             'linguist_stars' => 'required',
-            'legal_stars' => 'required'
+            'legal_stars' => 'required',
+            'wording_stars' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -163,7 +179,9 @@ class BookController extends Controller
 
         $report = new Report();
 
-        $report->content_id = $content_id;
+        $report->book_id = $book_id;
+        $report->sura = $sura;
+        $report->aya = $aya;
         $report->name = request("name");
         $report->email = request("email");
         $report->message = request("message");

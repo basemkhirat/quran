@@ -178,6 +178,9 @@ return array(
         "category_id" => "التصنيف",
         "name_ar" => "الإسم بالعربية",
         "content_ar" => "الإجابة بالعربية",
-        "stars" => "النجوم"
+        "stars" => "النجوم",
+        "linguist_stars" => "التقييم اللغوي",
+        "wording_stars" => "تقييم الصياغة والأسلوب",
+        "legal_stars" => "التقييم الشرعي"
     ),
 );
