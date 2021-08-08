@@ -27,7 +27,8 @@ class QuranController extends Controller
             "ayah_number as aya",
             "part as juz",
             "hizb as hizb",
-            "clean_text as text"
+            "clean_text as text",
+            "youtube_video_id"
         );
 
         if (request()->filled("page")) {
@@ -52,6 +53,17 @@ class QuranController extends Controller
             $query->whereHas("comments", function ($query) {
                 $query->where("user_id", auth("api")->user()->id);
             });
+        }
+
+        if (request()->filled("last_update")) {
+
+            $date = request()->get("last_update");
+
+            if (is_numeric($date)) {
+                $date = date("Y-m-d H:i:s", $date);
+            }
+
+            $query->where('updated_date', ">=", $date);
         }
 
         return response()->success($query->get());

@@ -50,38 +50,38 @@ class JsonGenerateCommand extends Command
 
         file_put_contents(base_path('public/data/pos.json'), json_encode($list));
 
-        $this->info('Generating page.json');
+        // $this->info('Generating page.json');
 
-        $pages = [];
+        // $pages = [];
 
-        for ($i = 1; $i <= 604; $i++) {
+        // for ($i = 1; $i <= 604; $i++) {
 
-            $part = DB::table("ayah")->where("masahef_id", config("main.moshaf_id"))
-                ->where("page_id", $i)
-                ->orderBy("part", "desc")
-                ->first();
+        //     $part = DB::table("ayah")->where("masahef_id", config("main.moshaf_id"))
+        //         ->where("page_id", $i)
+        //         ->orderBy("part", "desc")
+        //         ->first();
 
-            $hizb = DB::table("ayah")->where("masahef_id", config("main.moshaf_id"))
-                ->where("page_id", $i)
-                ->orderBy("hizb", "desc")
-                ->first();
+        //     $hizb = DB::table("ayah")->where("masahef_id", config("main.moshaf_id"))
+        //         ->where("page_id", $i)
+        //         ->orderBy("hizb", "desc")
+        //         ->first();
 
-            $page = DB::table("ayah")->where("masahef_id", config("main.moshaf_id"))
-                ->where("page_id", $i)
-                ->orderBy("ayah_number", "asc")
-                ->first();
+        //     $page = DB::table("ayah")->where("masahef_id", config("main.moshaf_id"))
+        //         ->where("page_id", $i)
+        //         ->orderBy("ayah_number", "asc")
+        //         ->first();
 
         
-            $pages[] = (object) [
-                "n" => $page->page_id,
-                "p" => $part->part,
-                "h" => $hizb->hizb,
-                "s" => $page->surah_id,
-                "a" => $page->ayah_number
-            ];
-        }
+        //     $pages[] = (object) [
+        //         "n" => $page->page_id,
+        //         "p" => $part->part,
+        //         "h" => $hizb->hizb,
+        //         "s" => $page->surah_id,
+        //         "a" => $page->ayah_number
+        //     ];
+        // }
 
-        file_put_contents(base_path('public/data/page.json'), json_encode($pages));
+        // file_put_contents(base_path('public/data/page.json'), json_encode($pages));
 
         $this->info('Generating aya.json');
 
@@ -106,6 +106,7 @@ class JsonGenerateCommand extends Command
 
             $sura->hizb = $first_aya->hizb;
             $sura->part = $first_aya->part;
+            $sura->font = str_replace("ﮌ ", "", DB::table("surah")->where("surah_id", $sura->number)->first()->title_uthmani);
 
             return $sura;
         }, $sura_rows);
