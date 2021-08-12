@@ -12,7 +12,7 @@ use App\Models\BookContent;
 use App\Models\Reciters;
 use App\Models\Tafasir;
 use App\Models\Tafsir;
-use App\Models\Tracks;
+use App\Models\Track;
 use App\Models\Transes;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\Resource;
@@ -212,8 +212,12 @@ class ApiController extends Controller
         $this->validate($request, [
             'track' => 'required|url'
         ]);
-        $track = Tracks::where('url', $request->track)->first();
-        return TimingResources::collection($track->timing);
+
+        $track = Track::where('url', $request->track)->first();
+
+        return $track->timing()
+            ->select("ayah_id as aya", "time_of_end as end")
+            ->orderBy("ayah_id", "asc")->get();
     }
 
     public function getTrack(Request $request)

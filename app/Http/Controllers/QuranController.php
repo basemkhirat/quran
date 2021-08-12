@@ -66,7 +66,42 @@ class QuranController extends Controller
             $query->where('updated_date', ">=", $date);
         }
 
-        return response()->success($query->get());
+
+        $ayat = $query->get();
+
+        if (auth("api")->check()) {
+            $ayat = $ayat->each(function ($row) {
+                $row->comment = DB::table("ayah_comments")
+                    ->select('id', 'title')
+                    ->where("sura", $row->sura)
+                    ->where("aya", $row->aya)
+                    ->where("user_id", auth("api")->user()->id)
+                    ->first();
+
+                return $row;
+            });
+        }
+
+
+        // $ayat = $query->get()->each(function($row) {
+
+        //     $aya_coords = DB::table("aya_text_highlights")
+        //         ->select("x1", "y1", "x2", "y2")
+        //         ->where("sura", $row->sura)
+        //         ->where("aya", $row->aya)->get();
+
+        //     $number_coords = DB::table("aya_number_highlights")
+        //         ->select("x1", "y1", "x2", "y2")
+        //         ->where("sura", $row->sura)
+        //         ->where("aya", $row->aya)->first();
+
+        //     $row->coords = (object) [
+        //         "aya" => $aya_coords,
+        //         "number" => $number_coords
+        //     ];
+        // });
+
+        return response()->success($ayat);
     }
 
     public function favorite($sura, $aya)

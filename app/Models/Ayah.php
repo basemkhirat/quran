@@ -11,7 +11,7 @@ class Ayah extends Model
     protected $primaryKey = 'ayah_id';
     protected $guarded = ['ayah_id'];
     public $timestamps = false;
-    protected $appends = ["is_favorited", "is_commented"];
+    protected $appends = ["is_favorited"];
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -26,9 +26,9 @@ class Ayah extends Model
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      * get favorites
      */
-    public function comments()
+    public function comment()
     {
-        return $this->hasMany(AyahComment::class, 'ayah_id', 'ayah_id');
+        return $this->hasOne(AyahComment::class, 'ayah_id', 'ayah_id');
     }
 
     public function getIsFavoritedAttribute()
@@ -44,16 +44,16 @@ class Ayah extends Model
         return false;
     }
 
-    public function getIsCommentedAttribute()
-    {
-        if (auth("api")->check()) {
-            $is_commented = DB::table("ayah_comments")->where("ayah_id", $this->attributes["id"])
-                ->where("user_id", auth("api")->user()->id)
-                ->count();
+    // public function getIsCommentedAttribute()
+    // {
+    //     if (auth("api")->check()) {
+    //         $is_commented = DB::table("ayah_comments")->where("ayah_id", $this->attributes["id"])
+    //             ->where("user_id", auth("api")->user()->id)
+    //             ->count();
 
-            return $is_commented > 0 ? true : false;
-        }
+    //         return $is_commented > 0 ? true : false;
+    //     }
        
-        return false;
-    }
+    //     return false;
+    // }
 }

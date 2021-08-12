@@ -69,6 +69,12 @@ Route::group(['prefix' => 'v1/'], function ($route) {
         'as' => 'tracks',
         'uses' => 'TracksController@find'
     ]);
+    
+
+    Route::get('track', [
+        'as' => 'track_info',
+        'uses' => 'TracksController@details'
+    ]);
 
     Route::post('tracks/{track_id}/favorite', [
         'as' => 'tracks_favorite',
@@ -78,13 +84,6 @@ Route::group(['prefix' => 'v1/'], function ($route) {
     Route::get('rewayat', [
         'as' => 'rewayat',
         'uses' => 'RewayatController@find'
-    ]);
-
-    // Track
-
-    Route::get('track', [
-        'as' => 'track',
-        'uses' => 'ApiController@getTrack'
     ]);
 
     // Timing
